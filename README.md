@@ -29,14 +29,14 @@ git clone https://github.com/tohahpro/library-management-api.git
 ```
 npm install
 ```
-### 4. Create a .env file
+### 3. Create a .env file
 ```
 PORT=5000
 DB_USERNAME=your_db_username
 DB_PASSWORD=your_db_password
 DB_NAME=your_db_name
 ```
-### 5. Start the server
+### 4. Start the server
 ```
 npm run dev
 The server will run at: http://localhost:5000/
