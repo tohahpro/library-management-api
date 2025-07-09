@@ -6,12 +6,19 @@ This project allows you to manage books and borrowing operations, with full vali
 ## Live Link: https://library-management-backend-black.vercel.app/
 ## 🚀 Features
 📘 Book Management: Create, read, update, and delete books
+
 🧾 Borrowing System: Borrow books with quantity tracking and due date validation
+
 ✅ Business Logic: Automatically marks books as unavailable when copies run out
+
 🧠 MongoDB Aggregation: View total borrowed quantity of each book
+
 🛡️ Schema Validation: Enforced via Mongoose
+
 🛠️ Mongoose Middleware: Pre and post hooks for deleted book remove from borrow book and logging
+
 🔍 Filtering & Sorting: Books can be filtered by genre and sorted by fields
+
 📦 Built with TypeScript: Strong typing using interfaces and model types
 
 ## 🛠️ Tech Stack
