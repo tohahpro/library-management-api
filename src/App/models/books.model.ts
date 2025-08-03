@@ -3,38 +3,43 @@ import { IBooksModel, IBooks } from "../interfaces/books.interface";
 import { Borrow } from "./borrow.model";
 
 const bookSchema = new Schema<IBooks>({
-    title: {type: String, required: true, trim: true},
-    author: { type: String, required: true, trim: true},
+    title: { type: String, required: true, trim: true },
+    author: { type: String, required: true, trim: true },
     genre: {
         type: String,
         enum: ['FICTION', 'NON_FICTION', 'SCIENCE', 'HISTORY', 'BIOGRAPHY', 'FANTASY'],
         required: true
     },
-    isbn: {type: String, required: true},
-    description : {type: String, default: ''},
-    copies : {type: Number, required: true, min:[0, 'Book copies number provide must be a positive']},
-    available  : {
-        type : Boolean,
+    isbn: { type: String, required: true },
+    description: { type: String, default: '' },
+    imageURL: { type: String, required: true },
+    copies: { type: Number, required: true, min: [0, 'Book copies number provide must be a positive'] },
+    available: {
+        type: Boolean,
         default: true
     },
 },
-{
-    versionKey: false,
-    timestamps : true
-});
+    {
+        versionKey: false,
+        timestamps: true
+    });
 
 
-bookSchema.statics.AvailableCopies = async function(bookId: string, quantity: number): Promise<IBooks> {
+bookSchema.statics.AvailableCopies = async function (bookId: string, quantity: number, dueDate: Date): Promise<IBooks> {
     const book = await this.findById(bookId)
-    if(!book){
-        throw new Error("Book is not Found")        
+    if (!book) {
+        throw new Error("Book is not Found")
     }
-    if(book.copies < quantity){
-        throw new Error("Enough copies are not available")        
+    if (!dueDate) {
+        throw new Error("Due date cannot be assigned");
     }
-    
+
+    if (book.copies < quantity) {
+        throw new Error("Enough copies are not available")
+    }
+
     book.copies -= quantity;
-    if(book.copies == 0){
+    if (book.copies == 0) {
         book.available = false
     }
 
@@ -45,16 +50,16 @@ bookSchema.statics.AvailableCopies = async function(bookId: string, quantity: nu
 
 
 bookSchema.pre('findOneAndDelete', async function (next) {
- 
+
     console.log('The Borrow book remove');
     next()
-    
+
 
 });
 
-bookSchema.post('findOneAndUpdate', async function (doc, next) {
-    if(doc){
-    await Borrow.deleteMany({book : doc._id})
+bookSchema.post('findOneAndDelete', async function (doc, next) {
+    if (doc) {
+        await Borrow.deleteMany({ book: doc._id })
     }
     next()
 })

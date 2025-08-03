@@ -7,9 +7,10 @@ export interface IBooks{
     isbn: string,
     description : string,
     copies : Number,
+    imageURL : string,
     available  : Boolean
 }
 
 export interface IBooksModel extends Model<IBooks> {
-    AvailableCopies(bookId: string, quantity: number) : Promise<IBooks>;
+    AvailableCopies(bookId: string, quantity: number, dueDate: Date) : Promise<IBooks>;
 }

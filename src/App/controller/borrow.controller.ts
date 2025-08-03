@@ -16,7 +16,7 @@ borrowRoutes.post('/', async (req: Request, res: Response) => {
             throw new Error("Book not found!!")
         }
 
-        await Book.AvailableCopies(book, quantity)
+        await Book.AvailableCopies(book, quantity, dueDate)
 
         const data = await Borrow.create({ book, quantity, dueDate });
 
@@ -68,7 +68,12 @@ borrowRoutes.get('/', async (req: Request, res: Response) => {
             },
             {
                 $facet: {
-                    data: [],
+                    data: [{
+                        $project: {
+                            totalQuantity: 1,
+                            book: 1
+                        }
+                    }],
                     totalCount: [
                         { $count: 'count' }
                     ]

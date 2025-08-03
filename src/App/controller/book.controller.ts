@@ -1,19 +1,19 @@
-import  express, { Request, Response }  from 'express';
+import express, { Request, Response } from 'express';
 import { Book } from '../models/books.model';
 
 
 export const bookRoutes = express.Router()
 
 
-bookRoutes.post('/', async (req: Request, res: Response)=>{
+bookRoutes.post('/', async (req: Request, res: Response) => {
 
     try {
         const body = req.body;
         const data = await Book.create(body)
 
         res.status(201).json({
-            success : true,
-            message : "Book created successfully",
+            success: true,
+            message: "Book created successfully",
             data
         })
 
@@ -27,28 +27,49 @@ bookRoutes.post('/', async (req: Request, res: Response)=>{
 
 })
 
-bookRoutes.get('/', async (req: Request, res: Response)=>{
-    
+bookRoutes.get('/', async (req: Request, res: Response) => {
+
     try {
-        const { filter, sortBy = 'createdAt', sort = 'desc', limit = 10 } = req.query;
+        const { filter, sortBy = 'createdAt', sort = 'desc', limit, page } = req.query;
 
         const query: any = {};
 
-        if(filter) {
+        if (filter) {
             query.genre = filter;
         }
-        
+
         const sortOrder = sort === 'asc' ? 1 : -1;
 
-        const data = await Book.find(query)
-            .sort({ [sortBy as string]: sortOrder })
-            .limit(parseInt(limit as string));
+        // const data = await Book.find(query)
+        //     .sort({ [sortBy as string]: sortOrder })
+        //     .limit(parseInt(limit as string));
 
+
+        const pageNumber = parseInt(page as string) || 1;
+        const limitNumber = parseInt(limit as string) || 10;
+        const skip = (pageNumber - 1) * limitNumber;
+
+        const [data, total] = await Promise.all([
+            Book.find(query)
+                .sort({ [sortBy as string]: sortOrder })
+                .skip(skip)
+                .limit(limitNumber),
+
+            Book.countDocuments(query),
+        ]);
+
+        const totalPages = Math.ceil(total / limitNumber);
 
         res.status(200).json({
-            success : true,
-            message : "Books retrieved successfully",
-            data
+            success: true,
+            message: "Books retrieved successfully",
+            data,
+            meta: {
+                total,
+                totalPages,
+                currentPage: pageNumber,
+                limit: limitNumber,
+            },
         })
 
 
@@ -62,15 +83,15 @@ bookRoutes.get('/', async (req: Request, res: Response)=>{
 })
 
 // get single book by id 
-bookRoutes.get('/:bookId', async (req: Request, res: Response)=>{
-  
+bookRoutes.get('/:bookId', async (req: Request, res: Response) => {
+
     try {
         const bookId = req.params.bookId
         const data = await Book.findById(bookId)
 
         res.status(200).json({
-            success : true,
-            message : "Book retrieved successfully",
+            success: true,
+            message: "Book retrieved successfully",
             data
         })
 
@@ -85,22 +106,22 @@ bookRoutes.get('/:bookId', async (req: Request, res: Response)=>{
 })
 
 // update single book by id 
-bookRoutes.patch('/:bookId', async (req: Request, res: Response)=>{
-    
+bookRoutes.patch('/:bookId', async (req: Request, res: Response) => {
+
 
     try {
         const bookId = req.params.bookId
         const updateBody = req.body
-        const data = await Book.findOneAndUpdate({_id: bookId}, updateBody, {new: true})
+        const data = await Book.findOneAndUpdate({ _id: bookId }, updateBody, { new: true })
 
         res.status(200).json({
-            success : true,
-            message : "Book updated successfully",
+            success: true,
+            message: "Book updated successfully",
             data
         })
 
     } catch (error) {
-         res.status(400).json({
+        res.status(400).json({
             success: false,
             message: 'Book Update Failed',
             error: (error as Error).message,
@@ -109,17 +130,17 @@ bookRoutes.patch('/:bookId', async (req: Request, res: Response)=>{
 })
 
 // delete book
-bookRoutes.delete('/:bookId', async (req: Request, res: Response)=>{
-    
+bookRoutes.delete('/:bookId', async (req: Request, res: Response) => {
+
 
     try {
 
         const bookId = req.params.bookId
-        const data = await Book.findOneAndDelete({_id: bookId})
+        const data = await Book.findOneAndDelete({ _id: bookId })
 
         res.status(200).json({
-            success : true,
-            message : "Book deleted successfully",
+            success: true,
+            message: "Book deleted successfully",
             data
         })
 
