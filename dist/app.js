@@ -10,7 +10,7 @@ const cors_1 = __importDefault(require("cors"));
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cors_1.default)({
-    origin: ["http://localhost:5173", "https://librarymanagement-jet.vercel.app"]
+    origin: ["http://localhost:5173", "https://librarymanagement-jade.vercel.app"]
 }));
 app.use("/api/books", book_controller_1.bookRoutes);
 app.use("/api/borrow", borrow_controller_1.borrowRoutes);

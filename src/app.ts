@@ -7,7 +7,7 @@ const app : Application = express();
 
 app.use(express.json())
 app.use(cors({
-    origin: ["http://localhost:5173", "https://librarymanagement-jet.vercel.app"]
+    origin: ["http://localhost:5173", "https://librarymanagement-jade.vercel.app"]
 }));
 
 app.use("/api/books", bookRoutes)
