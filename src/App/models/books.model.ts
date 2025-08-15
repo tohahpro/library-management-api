@@ -50,10 +50,8 @@ bookSchema.statics.AvailableCopies = async function (bookId: string, quantity: n
 
 
 bookSchema.pre('findOneAndDelete', async function (next) {
-
     console.log('The Borrow book remove');
     next()
-
 
 });
 

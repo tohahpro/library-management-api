@@ -22,6 +22,7 @@ const bookSchema = new mongoose_1.Schema({
     },
     isbn: { type: String, required: true },
     description: { type: String, default: '' },
+    imageURL: { type: String, required: true },
     copies: { type: Number, required: true, min: [0, 'Book copies number provide must be a positive'] },
     available: {
         type: Boolean,
@@ -31,11 +32,14 @@ const bookSchema = new mongoose_1.Schema({
     versionKey: false,
     timestamps: true
 });
-bookSchema.statics.AvailableCopies = function (bookId, quantity) {
+bookSchema.statics.AvailableCopies = function (bookId, quantity, dueDate) {
     return __awaiter(this, void 0, void 0, function* () {
         const book = yield this.findById(bookId);
         if (!book) {
             throw new Error("Book is not Found");
+        }
+        if (!dueDate) {
+            throw new Error("Due date cannot be assigned");
         }
         if (book.copies < quantity) {
             throw new Error("Enough copies are not available");
@@ -54,7 +58,7 @@ bookSchema.pre('findOneAndDelete', function (next) {
         next();
     });
 });
-bookSchema.post('findOneAndUpdate', function (doc, next) {
+bookSchema.post('findOneAndDelete', function (doc, next) {
     return __awaiter(this, void 0, void 0, function* () {
         if (doc) {
             yield borrow_model_1.Borrow.deleteMany({ book: doc._id });

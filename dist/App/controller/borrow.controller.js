@@ -23,7 +23,7 @@ exports.borrowRoutes.post('/', (req, res) => __awaiter(void 0, void 0, void 0, f
         if (!book) {
             throw new Error("Book not found!!");
         }
-        yield books_model_1.Book.AvailableCopies(book, quantity);
+        yield books_model_1.Book.AvailableCopies(book, quantity, dueDate);
         const data = yield borrow_model_1.Borrow.create({ book, quantity, dueDate });
         res.status(201).json({
             success: true,
@@ -70,7 +70,12 @@ exports.borrowRoutes.get('/', (req, res) => __awaiter(void 0, void 0, void 0, fu
             },
             {
                 $facet: {
-                    data: [],
+                    data: [{
+                            $project: {
+                                totalQuantity: 1,
+                                book: 1
+                            }
+                        }],
                     totalCount: [
                         { $count: 'count' }
                     ]

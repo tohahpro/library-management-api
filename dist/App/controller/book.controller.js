@@ -36,19 +36,36 @@ exports.bookRoutes.post('/', (req, res) => __awaiter(void 0, void 0, void 0, fun
 }));
 exports.bookRoutes.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { filter, sortBy = 'createdAt', sort = 'desc', limit = 10 } = req.query;
+        const { filter, sortBy = 'createdAt', sort = 'desc', limit, page } = req.query;
         const query = {};
         if (filter) {
             query.genre = filter;
         }
         const sortOrder = sort === 'asc' ? 1 : -1;
-        const data = yield books_model_1.Book.find(query)
-            .sort({ [sortBy]: sortOrder })
-            .limit(parseInt(limit));
+        // const data = await Book.find(query)
+        //     .sort({ [sortBy as string]: sortOrder })
+        //     .limit(parseInt(limit as string));
+        const pageNumber = parseInt(page) || 1;
+        const limitNumber = parseInt(limit) || 10;
+        const skip = (pageNumber - 1) * limitNumber;
+        const [data, total] = yield Promise.all([
+            books_model_1.Book.find(query)
+                .sort({ [sortBy]: sortOrder })
+                .skip(skip)
+                .limit(limitNumber),
+            books_model_1.Book.countDocuments(query),
+        ]);
+        const totalPages = Math.ceil(total / limitNumber);
         res.status(200).json({
             success: true,
             message: "Books retrieved successfully",
-            data
+            data,
+            meta: {
+                total,
+                totalPages,
+                currentPage: pageNumber,
+                limit: limitNumber,
+            },
         });
     }
     catch (error) {
