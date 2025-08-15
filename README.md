@@ -3,7 +3,11 @@ A backend REST API for managing a library system — built with Express, TypeScr
 
 This project allows you to manage books and borrowing operations, with full validation, business logic, filtering, and aggregation.
 
-## Live Link: https://library-management-backend-black.vercel.app/
+## Live Link: 
+
+[Visit api site](https://library-management-backend-taupe.vercel.app)
+
+
 ## 🚀 Features
 📘 Book Management: Create, read, update, and delete books
 
@@ -20,6 +24,8 @@ This project allows you to manage books and borrowing operations, with full vali
 🔍 Filtering & Sorting: Books can be filtered by genre and sorted by fields
 
 📦 Built with TypeScript: Strong typing using interfaces and model types
+
+
 
 ## 🛠️ Tech Stack
 1. Node.js + Express.js
